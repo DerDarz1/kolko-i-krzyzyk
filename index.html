@@ -229,7 +229,11 @@ function startGame(d) {
 }
 
 function syncState(d) {
-  const board = d.board || Array(9).fill(null);
+  // normalize board — Firebase drops nulls, stores sparse object or uses 0 as placeholder
+  const board = Array.from({length:9}, (_,i) => {
+    const v = d.board && d.board[i];
+    return (v && v !== 0) ? v : null;
+  });
   renderBoard(board, d.turn, d.winCombo || null);
   updateTurn(d.turn);
   if (d.status === 'won') {
@@ -243,8 +247,9 @@ function syncState(d) {
     document.getElementById('rematch-btn').style.display = '';
   } else {
     document.getElementById('game-status').textContent = '';
+    document.getElementById('rematch-btn').style.display = 'none';
   }
-  if (d.rematch >= 2) { scores = {me:0,opp:0,draw:0}; resetRoom(); }
+  if (d.rematch >= 2) resetRoom();
 }
 
 function renderBoard(board, turn, winCombo) {
@@ -265,28 +270,35 @@ function updateTurn(turn) {
 }
 
 window.move = async function(idx) {
+  if (!roomRef) return;
   const snap = await get(roomRef);
   const d = snap.val();
-  if (!d || d.status !== 'playing') return;
+  if (!d) return;
+  // allow move when playing OR waiting (host moves first before guest joins edge case)
+  if (d.status === 'won' || d.status === 'draw') return;
   if (d.turn !== mySymbol) return;
-  if (d.board[idx]) return;
-  const board = [...d.board];
+  // Firebase stores sparse arrays — normalize to 9-element array
+  const board = Array.from({length:9}, (_,i) => (d.board && d.board[i]) ? d.board[i] : null);
+  if (board[idx]) return;
   board[idx] = mySymbol;
   const win = checkWin(board);
   const full = board.every(c=>c);
-  let update_data = { board, turn: mySymbol==='X'?'O':'X' };
+  // Firebase can't store null in arrays — use 0 as empty placeholder
+  const fbBoard = board.map(c => c || 0);
+  let upd = { board: fbBoard, turn: mySymbol==='X'?'O':'X', status:'playing' };
   if (win) {
-    update_data.status = 'won';
-    update_data.winner = mySymbol;
-    update_data.winCombo = win;
-    update_data.turn = mySymbol;
-    if (mySymbol==='X') { scores.me++; document.getElementById('sc-you').textContent=scores.me; }
-    else                { scores.me++; document.getElementById('sc-you').textContent=scores.me; }
+    upd.status = 'won';
+    upd.winner = mySymbol;
+    upd.winCombo = win;
+    upd.turn = mySymbol;
+    scores.me++;
+    document.getElementById('sc-you').textContent = scores.me;
   } else if (full) {
-    update_data.status = 'draw';
-    scores.draw++; document.getElementById('sc-draw').textContent=scores.draw;
+    upd.status = 'draw';
+    scores.draw++;
+    document.getElementById('sc-draw').textContent = scores.draw;
   }
-  await update(roomRef, update_data);
+  await update(roomRef, upd);
 };
 
 function checkWin(board) {
@@ -305,7 +317,15 @@ window.rematch = async function() {
 };
 
 async function resetRoom() {
-  await update(roomRef, { board: Array(9).fill(null), turn:'X', status:'playing', winner:null, winCombo:null, rematch:0 });
+  scores = {me:0, opp:0, draw:0};
+  document.getElementById('sc-you').textContent = 0;
+  document.getElementById('sc-opp').textContent = 0;
+  document.getElementById('sc-draw').textContent = 0;
+  await update(roomRef, {
+    board: [0,0,0,0,0,0,0,0,0],
+    turn:'X', status:'playing',
+    winner:0, winCombo:0, rematch:0
+  });
 }
 
 window.leave = function() {
