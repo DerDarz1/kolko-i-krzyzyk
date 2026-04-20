@@ -1,0 +1,12 @@
+{
+  "name": "Kółko i Krzyżyk Multiplayer",
+  "short_name": "TKT",
+  "description": "Multiplayer kółko i krzyżyk dla 2 graczy przez internet",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
