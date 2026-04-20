@@ -15,446 +15,316 @@
     }
     body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;
       min-height:100vh;display:flex;flex-direction:column;align-items:center;
-      justify-content:center;padding:20px;gap:24px;}
-
-    h1{font-size:clamp(22px,5vw,32px);font-weight:900;letter-spacing:2px;text-align:center;}
-    .sub{font-size:13px;color:var(--muted);text-align:center;letter-spacing:.5px;}
-
-    /* SCREENS */
-    .screen{display:none;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:400px;}
+      justify-content:center;padding:20px;gap:20px;}
+    h1{font-size:clamp(20px,5vw,30px);font-weight:900;letter-spacing:2px;text-align:center;}
+    .sub{font-size:13px;color:var(--muted);text-align:center;}
+    .screen{display:none;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:380px;}
     .screen.active{display:flex;}
-
-    /* BUTTONS */
-    .btn{
-      width:100%;padding:14px;border-radius:12px;border:none;
-      font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.5px;
-      transition:transform .1s,opacity .1s;
-    }
-    .btn:active{transform:scale(.97);}
+    .btn{width:100%;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s;}
+    .btn:active{opacity:.8;}
     .btn-primary{background:var(--accent);color:#fff;}
     .btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border);}
     .btn-danger{background:#ef4444;color:#fff;}
-
-    /* INPUT */
-    input{
-      width:100%;padding:12px 16px;border-radius:12px;
-      border:1px solid var(--border);background:var(--surface);
-      color:var(--text);font-size:15px;outline:none;
-      transition:border-color .15s;
-    }
+    input{width:100%;padding:12px 16px;border-radius:12px;border:1px solid var(--border);
+      background:var(--surface);color:var(--text);font-size:15px;outline:none;transition:border-color .15s;}
     input:focus{border-color:var(--accent);}
-
-    /* ROOM CODE */
-    .room-code{
-      font-size:36px;font-weight:900;letter-spacing:8px;
-      font-family:monospace;color:var(--accent);
-      background:var(--surface);border:1px solid var(--border);
-      border-radius:12px;padding:16px 32px;text-align:center;
-    }
-
-    /* STATUS */
-    .status{
-      font-size:13px;font-weight:700;letter-spacing:1px;
-      color:var(--muted);text-align:center;min-height:20px;
-    }
-    .status.live{color:var(--o);}
-    .status.waiting{color:var(--x);}
-
+    .room-code{font-size:38px;font-weight:900;letter-spacing:8px;font-family:monospace;
+      color:var(--accent);background:var(--surface);border:1px solid var(--border);
+      border-radius:12px;padding:16px 32px;text-align:center;}
+    .status{font-size:13px;font-weight:700;letter-spacing:1px;color:var(--muted);text-align:center;min-height:18px;}
+    .status.ok{color:var(--o);} .status.err{color:var(--x);}
+    .copy-row{display:flex;gap:8px;width:100%;}
+    .copy-row input{flex:1;font-size:12px;}
+    .copy-row button{padding:12px 14px;border-radius:12px;border:1px solid var(--border);
+      background:var(--surface);color:var(--text);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
     /* BOARD */
-    .board{
-      display:grid;grid-template-columns:repeat(3,1fr);
-      gap:10px;width:min(90vw,320px);
-    }
-    .cell{
-      aspect-ratio:1;background:var(--surface);
-      border:1px solid var(--border);border-radius:14px;
+    .scoreboard{display:flex;gap:16px;}
+    .score-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:10px 18px;text-align:center;min-width:76px;}
+    .score-box .lbl{font-size:9px;letter-spacing:2px;color:var(--muted);font-weight:700;}
+    .score-box .val{font-size:26px;font-weight:900;font-family:monospace;}
+    .score-box.you .val{color:var(--x);} .score-box.opp .val{color:var(--o);} .score-box.draws .val{color:var(--muted);}
+    .turn{font-size:13px;font-weight:700;letter-spacing:1px;padding:8px 18px;
+      border-radius:20px;background:var(--surface);border:1px solid var(--border);}
+    .turn.mine{border-color:var(--accent);color:var(--accent);}
+    .board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:min(88vw,300px);}
+    .cell{aspect-ratio:1;background:var(--surface);border:1px solid var(--border);border-radius:14px;
       display:flex;align-items:center;justify-content:center;
-      font-size:clamp(32px,10vw,56px);font-weight:900;
-      cursor:pointer;transition:background .15s,transform .1s;
-      user-select:none;
-    }
-    .cell:hover:not(.taken){background:#273549;transform:scale(1.04);}
+      font-size:clamp(28px,9vw,52px);font-weight:900;cursor:pointer;
+      transition:background .12s,transform .1s;user-select:none;}
+    .cell:hover:not(.taken){background:#273549;transform:scale(1.05);}
     .cell.taken{cursor:default;}
-    .cell.x{color:var(--x);}
-    .cell.o{color:var(--o);}
+    .cell.x{color:var(--x);} .cell.o{color:var(--o);}
     .cell.win{background:#1e3a2f;border-color:var(--o);}
     .cell.win.x{background:#3b1a2a;border-color:var(--x);}
-
-    /* SCORE */
-    .scoreboard{
-      display:flex;gap:20px;
-    }
-    .score-box{
-      background:var(--surface);border:1px solid var(--border);
-      border-radius:12px;padding:10px 20px;text-align:center;min-width:80px;
-    }
-    .score-box .label{font-size:10px;letter-spacing:2px;color:var(--muted);font-weight:700;}
-    .score-box .val{font-size:28px;font-weight:900;font-family:monospace;}
-    .score-box.you .val{color:var(--x);}
-    .score-box.opp .val{color:var(--o);}
-    .score-box.draws .val{color:var(--muted);}
-
-    /* TURN INDICATOR */
-    .turn{
-      font-size:13px;font-weight:700;letter-spacing:1px;
-      padding:8px 18px;border-radius:20px;
-      background:var(--surface);border:1px solid var(--border);
-    }
-    .turn.your-turn{border-color:var(--accent);color:var(--accent);}
-
-    /* COPY BTN */
-    .copy-row{display:flex;gap:8px;width:100%;}
-    .copy-row input{flex:1;}
-    .copy-row button{
-      padding:12px 16px;border-radius:12px;border:1px solid var(--border);
-      background:var(--surface);color:var(--text);font-size:13px;
-      font-weight:700;cursor:pointer;white-space:nowrap;
-    }
-    .copy-row button:active{opacity:.7;}
-
-    /* CONNECTING OVERLAY */
-    #connecting{
-      position:fixed;inset:0;background:#0f172acc;
-      display:none;align-items:center;justify-content:center;
-      flex-direction:column;gap:12px;z-index:99;
-      font-size:14px;color:var(--muted);letter-spacing:1px;
-    }
-    #connecting.show{display:flex;}
-    .spinner{
-      width:36px;height:36px;border:3px solid var(--border);
-      border-top-color:var(--accent);border-radius:50%;
-      animation:spin .7s linear infinite;
-    }
+    /* SPINNER */
+    #overlay{position:fixed;inset:0;background:#0f172acc;display:none;
+      align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:99;}
+    #overlay.show{display:flex;}
+    .spinner{width:34px;height:34px;border:3px solid var(--border);
+      border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg)}}
+    #overlay-msg{font-size:13px;color:var(--muted);letter-spacing:1px;}
   </style>
 </head>
 <body>
 
-<div id="connecting">
-  <div class="spinner"></div>
-  <span id="connecting-msg">Łączenie...</span>
-</div>
+<div id="overlay"><div class="spinner"></div><div id="overlay-msg">Łączenie...</div></div>
 
-<!-- SCREEN: HOME -->
-<div class="screen active" id="screen-home">
+<!-- HOME -->
+<div class="screen active" id="s-home">
   <h1>✕ ○ MULTIPLAYER</h1>
   <p class="sub">Zagraj z przyjacielem przez internet</p>
   <button class="btn btn-primary" onclick="createRoom()">Utwórz pokój</button>
-  <button class="btn btn-secondary" onclick="showJoin()">Dołącz do pokoju</button>
+  <button class="btn btn-secondary" onclick="goJoin()">Dołącz do pokoju</button>
 </div>
 
-<!-- SCREEN: JOIN -->
-<div class="screen" id="screen-join">
+<!-- JOIN -->
+<div class="screen" id="s-join">
   <h1>Dołącz</h1>
-  <input id="join-code" placeholder="Wpisz kod pokoju" maxlength="6"
+  <input id="join-code" placeholder="Kod pokoju (6 znaków)" maxlength="6"
     style="text-align:center;font-size:24px;letter-spacing:6px;font-family:monospace;text-transform:uppercase"
     oninput="this.value=this.value.toUpperCase()"/>
   <button class="btn btn-primary" onclick="joinRoom()">Dołącz</button>
-  <button class="btn btn-secondary" onclick="showScreen('screen-home')">Wróć</button>
-  <div class="status" id="join-status"></div>
+  <button class="btn btn-secondary" onclick="show('s-home')">Wróć</button>
+  <div class="status err" id="join-err"></div>
 </div>
 
-<!-- SCREEN: WAITING -->
-<div class="screen" id="screen-waiting">
+<!-- WAITING -->
+<div class="screen" id="s-wait">
   <h1>Pokój gotowy</h1>
-  <p class="sub">Wyślij kod znajomemu</p>
-  <div class="room-code" id="display-code">------</div>
+  <p class="sub">Wyślij kod lub link znajomemu</p>
+  <div class="room-code" id="disp-code">------</div>
   <div class="copy-row">
     <input id="share-link" readonly/>
-    <button onclick="copyLink()">Kopiuj</button>
+    <button onclick="copyLink()">Kopiuj link</button>
   </div>
-  <div class="status waiting" id="waiting-status">Czekam na drugiego gracza...</div>
-  <button class="btn btn-danger" onclick="leaveGame()">Anuluj</button>
+  <div class="status" id="wait-status">⏳ Czekam na drugiego gracza...</div>
+  <button class="btn btn-danger" onclick="leave()">Anuluj</button>
 </div>
 
-<!-- SCREEN: GAME -->
-<div class="screen" id="screen-game">
+<!-- GAME -->
+<div class="screen" id="s-game">
   <div class="scoreboard">
-    <div class="score-box you">
-      <div class="label" id="you-label">TY (✕)</div>
-      <div class="val" id="score-you">0</div>
-    </div>
-    <div class="score-box draws">
-      <div class="label">REMIS</div>
-      <div class="val" id="score-draw">0</div>
-    </div>
-    <div class="score-box opp">
-      <div class="label" id="opp-label">RYWAL (○)</div>
-      <div class="val" id="score-opp">0</div>
-    </div>
+    <div class="score-box you"><div class="lbl" id="lbl-you">TY (✕)</div><div class="val" id="sc-you">0</div></div>
+    <div class="score-box draws"><div class="lbl">REMIS</div><div class="val" id="sc-draw">0</div></div>
+    <div class="score-box opp"><div class="lbl" id="lbl-opp">RYWAL (○)</div><div class="val" id="sc-opp">0</div></div>
   </div>
-
-  <div class="turn" id="turn-indicator">Ładowanie...</div>
-
+  <div class="turn" id="turn-ind">...</div>
   <div class="board" id="board">
-    <div class="cell" onclick="move(0)"></div>
-    <div class="cell" onclick="move(1)"></div>
-    <div class="cell" onclick="move(2)"></div>
-    <div class="cell" onclick="move(3)"></div>
-    <div class="cell" onclick="move(4)"></div>
-    <div class="cell" onclick="move(5)"></div>
-    <div class="cell" onclick="move(6)"></div>
-    <div class="cell" onclick="move(7)"></div>
-    <div class="cell" onclick="move(8)"></div>
+    <div class="cell" onclick="move(0)"></div><div class="cell" onclick="move(1)"></div><div class="cell" onclick="move(2)"></div>
+    <div class="cell" onclick="move(3)"></div><div class="cell" onclick="move(4)"></div><div class="cell" onclick="move(5)"></div>
+    <div class="cell" onclick="move(6)"></div><div class="cell" onclick="move(7)"></div><div class="cell" onclick="move(8)"></div>
   </div>
-
   <div class="status" id="game-status"></div>
-  <button class="btn btn-secondary" id="rematch-btn" style="display:none" onclick="requestRematch()">Rewanż</button>
-  <button class="btn btn-danger" onclick="leaveGame()">Wyjdź</button>
+  <button class="btn btn-secondary" id="rematch-btn" style="display:none" onclick="rematch()">🔄 Rewanż</button>
+  <button class="btn btn-danger" onclick="leave()">Wyjdź</button>
 </div>
 
-<script>
-// ─── CONFIG ───────────────────────────────────────────────────────────────────
-// Uses BroadcastChannel for same-device testing + PeerJS for real multiplayer
-// PeerJS is free, no server needed for signaling (uses peerjs.com STUN/TURN)
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue, update, remove, onDisconnect }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// ── Firebase config (free Spark plan, public read/write) ──────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyDemo-ReplaceWithYours",
+  authDomain: "tkt-game.firebaseapp.com",
+  databaseURL: "https://tkt-game-default-rtdb.firebaseio.com",
+  projectId: "tkt-game",
+};
+// ─────────────────────────────────────────────────────────────────────────────
+// NOTE: Replace the config above with your own free Firebase project.
+// Instructions in README.md
 // ─────────────────────────────────────────────────────────────────────────────
 
-const PEERJS_CDN = "https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js";
-
-let peer = null;
-let conn = null;
-let mySymbol = null; // 'X' or 'O'
-let board = Array(9).fill(null);
-let currentTurn = 'X'; // X always starts
-let gameOver = false;
-let scores = { me: 0, opp: 0, draw: 0 };
-let rematchVotes = 0;
-let myRole = null; // 'host' or 'guest'
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 const WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
 
-// ─── PEERJS LOADER ────────────────────────────────────────────────────────────
-function loadPeerJS(cb) {
-  if (window.Peer) { cb(); return; }
-  const s = document.createElement('script');
-  s.src = PEERJS_CDN;
-  s.onload = cb;
-  document.head.appendChild(s);
-}
+let myRole = null; // 'host' | 'guest'
+let mySymbol = null; // 'X' | 'O'
+let roomCode = null;
+let roomRef = null;
+let unsubscribe = null;
+let scores = {me:0,opp:0,draw:0};
 
-// ─── SCREENS ─────────────────────────────────────────────────────────────────
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+// ── UI helpers ────────────────────────────────────────────────────────────────
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function overlay(show, msg='Łączenie...'){ document.getElementById('overlay-msg').textContent=msg; document.getElementById('overlay').classList.toggle('show',show); }
+window.show = show;
 
-function showJoin() {
+// ── Create room ───────────────────────────────────────────────────────────────
+window.createRoom = async function() {
+  overlay(true,'Tworzenie pokoju...');
+  roomCode = Math.random().toString(36).substring(2,8).toUpperCase();
+  roomRef = ref(db, 'rooms/' + roomCode);
+  const state = { board: Array(9).fill(null), turn: 'X', status: 'waiting', host: true, guest: false, rematch: 0 };
+  await set(roomRef, state);
+  onDisconnect(roomRef).remove();
+  overlay(false);
+  document.getElementById('disp-code').textContent = roomCode;
+  const link = location.origin + location.pathname + '?room=' + roomCode;
+  document.getElementById('share-link').value = link;
+  myRole = 'host'; mySymbol = 'X';
+  show('s-wait');
+  // listen for guest joining
+  unsubscribe = onValue(roomRef, snap => {
+    const d = snap.val();
+    if (!d) return;
+    if (d.guest && d.status === 'playing') { unsubscribe(); startGame(d); }
+  });
+};
+
+// ── Join room ─────────────────────────────────────────────────────────────────
+window.goJoin = function() {
   document.getElementById('join-code').value = '';
-  document.getElementById('join-status').textContent = '';
-  // check URL for code
+  document.getElementById('join-err').textContent = '';
   const params = new URLSearchParams(location.search);
   if (params.get('room')) document.getElementById('join-code').value = params.get('room').toUpperCase();
-  showScreen('screen-join');
-}
+  show('s-join');
+};
 
-function setConnecting(show, msg = 'Łączenie...') {
-  document.getElementById('connecting-msg').textContent = msg;
-  document.getElementById('connecting').classList.toggle('show', show);
-}
-
-// ─── CREATE ROOM ─────────────────────────────────────────────────────────────
-function createRoom() {
-  setConnecting(true, 'Tworzenie pokoju...');
-  loadPeerJS(() => {
-    const code = Math.random().toString(36).substring(2,8).toUpperCase();
-    peer = new Peer('TKT-' + code, { debug: 0 });
-
-    peer.on('open', () => {
-      setConnecting(false);
-      myRole = 'host';
-      mySymbol = 'X';
-      document.getElementById('display-code').textContent = code;
-      const link = location.origin + location.pathname + '?room=' + code;
-      document.getElementById('share-link').value = link;
-      showScreen('screen-waiting');
-    });
-
-    peer.on('connection', c => {
-      conn = c;
-      setupConn();
-      document.getElementById('waiting-status').textContent = 'Gracz dołączył! Startujemy...';
-      document.getElementById('waiting-status').className = 'status live';
-      setTimeout(() => startGame(), 800);
-    });
-
-    peer.on('error', e => {
-      setConnecting(false);
-      alert('Błąd: ' + e.message);
-      showScreen('screen-home');
-    });
-  });
-}
-
-// ─── JOIN ROOM ────────────────────────────────────────────────────────────────
-function joinRoom() {
+window.joinRoom = async function() {
   const code = document.getElementById('join-code').value.trim().toUpperCase();
-  if (code.length < 4) { document.getElementById('join-status').textContent = 'Wpisz kod pokoju'; return; }
-  setConnecting(true, 'Dołączanie...');
-  loadPeerJS(() => {
-    peer = new Peer(undefined, { debug: 0 });
-    peer.on('open', () => {
-      conn = peer.connect('TKT-' + code, { reliable: true });
-      myRole = 'guest';
-      mySymbol = 'O';
-      setupConn();
-    });
-    peer.on('error', e => {
-      setConnecting(false);
-      document.getElementById('join-status').textContent = 'Nie znaleziono pokoju: ' + code;
-    });
-  });
-}
+  if (code.length < 4) { document.getElementById('join-err').textContent = 'Wpisz kod pokoju'; return; }
+  overlay(true,'Dołączanie...');
+  roomCode = code;
+  roomRef = ref(db, 'rooms/' + roomCode);
+  const snap = await get(roomRef);
+  if (!snap.exists()) { overlay(false); document.getElementById('join-err').textContent = '❌ Nie znaleziono pokoju: ' + code; show('s-join'); return; }
+  const d = snap.val();
+  if (d.status !== 'waiting') { overlay(false); document.getElementById('join-err').textContent = '❌ Pokój jest już zajęty'; show('s-join'); return; }
+  myRole = 'guest'; mySymbol = 'O';
+  await update(roomRef, { guest: true, status: 'playing' });
+  onDisconnect(roomRef).remove();
+  overlay(false);
+  startGame(d);
+  // listen for moves
+  unsubscribe = onValue(roomRef, snap => { const d=snap.val(); if(d) syncState(d); });
+};
 
-// ─── CONNECTION SETUP ─────────────────────────────────────────────────────────
-function setupConn() {
-  conn.on('open', () => {
-    setConnecting(false);
-    if (myRole === 'guest') startGame();
-  });
-  conn.on('data', handleMessage);
-  conn.on('close', () => {
-    if (document.getElementById('screen-game').classList.contains('active')) {
-      document.getElementById('game-status').textContent = '⚠️ Przeciwnik rozłączył się';
-      document.getElementById('game-status').className = 'status waiting';
-    }
-  });
-  conn.on('error', e => console.error(e));
-}
-
-function send(msg) {
-  if (conn && conn.open) conn.send(msg);
-}
-
-// ─── GAME ─────────────────────────────────────────────────────────────────────
-function startGame() {
-  board = Array(9).fill(null);
-  currentTurn = 'X';
-  gameOver = false;
-  rematchVotes = 0;
+// ── Game ──────────────────────────────────────────────────────────────────────
+function startGame(d) {
+  document.getElementById('lbl-you').textContent  = `TY (${mySymbol==='X'?'✕':'○'})`;
+  document.getElementById('lbl-opp').textContent  = `RYWAL (${mySymbol==='X'?'○':'✕'})`;
+  document.getElementById('sc-you').textContent   = scores.me;
+  document.getElementById('sc-opp').textContent   = scores.opp;
+  document.getElementById('sc-draw').textContent  = scores.draw;
   document.getElementById('rematch-btn').style.display = 'none';
+  document.getElementById('rematch-btn').disabled = false;
+  document.getElementById('rematch-btn').textContent = '🔄 Rewanż';
   document.getElementById('game-status').textContent = '';
-
-  // labels
-  document.getElementById('you-label').textContent = `TY (${mySymbol})`;
-  document.getElementById('opp-label').textContent = `RYWAL (${mySymbol === 'X' ? 'O' : 'X'})`;
-  document.getElementById('score-you').textContent = scores.me;
-  document.getElementById('score-opp').textContent = scores.opp;
-  document.getElementById('score-draw').textContent = scores.draw;
-
-  renderBoard();
-  updateTurnIndicator();
-  showScreen('screen-game');
-}
-
-function renderBoard() {
-  const cells = document.querySelectorAll('.cell');
-  cells.forEach((cell, i) => {
-    cell.textContent = board[i] === 'X' ? '✕' : board[i] === 'O' ? '○' : '';
-    cell.className = 'cell' + (board[i] ? ' taken ' + board[i].toLowerCase() : '');
-  });
-}
-
-function updateTurnIndicator() {
-  const el = document.getElementById('turn-indicator');
-  const isMyTurn = currentTurn === mySymbol;
-  el.textContent = isMyTurn ? '🟢 Twój ruch' : '⏳ Ruch przeciwnika';
-  el.className = 'turn' + (isMyTurn ? ' your-turn' : '');
-}
-
-function move(idx) {
-  if (gameOver || board[idx] || currentTurn !== mySymbol) return;
-  board[idx] = mySymbol;
-  send({ type: 'move', idx });
-  afterMove(idx);
-}
-
-function afterMove(idx) {
-  renderBoard();
-  const win = checkWin();
-  if (win) {
-    highlightWin(win.combo, currentTurn);
-    const iWon = currentTurn === mySymbol;
-    if (iWon) { scores.me++; document.getElementById('score-you').textContent = scores.me; }
-    else       { scores.opp++; document.getElementById('score-opp').textContent = scores.opp; }
-    document.getElementById('game-status').textContent = iWon ? '🎉 Wygrałeś!' : '😔 Przegrałeś';
-    document.getElementById('game-status').className = 'status ' + (iWon ? 'live' : 'waiting');
-    gameOver = true;
-    document.getElementById('rematch-btn').style.display = '';
-    return;
+  show('s-game');
+  syncState(d);
+  if (myRole === 'host') {
+    unsubscribe && unsubscribe();
+    unsubscribe = onValue(roomRef, snap => { const d=snap.val(); if(d) syncState(d); });
   }
-  if (board.every(c => c)) {
-    scores.draw++; document.getElementById('score-draw').textContent = scores.draw;
+}
+
+function syncState(d) {
+  const board = d.board || Array(9).fill(null);
+  renderBoard(board, d.turn, d.winCombo || null);
+  updateTurn(d.turn);
+  if (d.status === 'won') {
+    const iWon = d.winner === mySymbol;
+    document.getElementById('game-status').textContent = iWon ? '🎉 Wygrałeś!' : '😔 Przegrałeś';
+    document.getElementById('game-status').className = 'status ' + (iWon?'ok':'err');
+    document.getElementById('rematch-btn').style.display = '';
+  } else if (d.status === 'draw') {
     document.getElementById('game-status').textContent = '🤝 Remis!';
     document.getElementById('game-status').className = 'status';
-    gameOver = true;
     document.getElementById('rematch-btn').style.display = '';
-    return;
+  } else {
+    document.getElementById('game-status').textContent = '';
   }
-  currentTurn = currentTurn === 'X' ? 'O' : 'X';
-  updateTurnIndicator();
+  if (d.rematch >= 2) { scores = {me:0,opp:0,draw:0}; resetRoom(); }
 }
 
-function checkWin() {
-  for (const combo of WINS) {
-    const [a,b,c] = combo;
-    if (board[a] && board[a] === board[b] && board[a] === board[c])
-      return { winner: board[a], combo };
+function renderBoard(board, turn, winCombo) {
+  const cells = document.querySelectorAll('.cell');
+  cells.forEach((cell,i) => {
+    const v = board[i];
+    cell.textContent = v==='X'?'✕':v==='O'?'○':'';
+    cell.className = 'cell' + (v?' taken '+v.toLowerCase():'');
+    if (winCombo && winCombo.includes(i)) cell.classList.add('win', (board[i]||'').toLowerCase());
+  });
+}
+
+function updateTurn(turn) {
+  const mine = turn === mySymbol;
+  const el = document.getElementById('turn-ind');
+  el.textContent = mine ? '🟢 Twój ruch' : '⏳ Ruch przeciwnika';
+  el.className = 'turn' + (mine?' mine':'');
+}
+
+window.move = async function(idx) {
+  const snap = await get(roomRef);
+  const d = snap.val();
+  if (!d || d.status !== 'playing') return;
+  if (d.turn !== mySymbol) return;
+  if (d.board[idx]) return;
+  const board = [...d.board];
+  board[idx] = mySymbol;
+  const win = checkWin(board);
+  const full = board.every(c=>c);
+  let update_data = { board, turn: mySymbol==='X'?'O':'X' };
+  if (win) {
+    update_data.status = 'won';
+    update_data.winner = mySymbol;
+    update_data.winCombo = win;
+    update_data.turn = mySymbol;
+    if (mySymbol==='X') { scores.me++; document.getElementById('sc-you').textContent=scores.me; }
+    else                { scores.me++; document.getElementById('sc-you').textContent=scores.me; }
+  } else if (full) {
+    update_data.status = 'draw';
+    scores.draw++; document.getElementById('sc-draw').textContent=scores.draw;
   }
+  await update(roomRef, update_data);
+};
+
+function checkWin(board) {
+  for (const [a,b,c] of WINS) if (board[a]&&board[a]===board[b]&&board[a]===board[c]) return [a,b,c];
   return null;
 }
 
-function highlightWin(combo, symbol) {
-  const cells = document.querySelectorAll('.cell');
-  combo.forEach(i => cells[i].classList.add('win', symbol.toLowerCase()));
-}
-
-function requestRematch() {
-  send({ type: 'rematch' });
-  rematchVotes++;
-  document.getElementById('rematch-btn').textContent = 'Czekam na rywala...';
+window.rematch = async function() {
   document.getElementById('rematch-btn').disabled = true;
-  if (rematchVotes >= 2) startGame();
+  document.getElementById('rematch-btn').textContent = 'Czekam na rywala...';
+  const snap = await get(roomRef);
+  const d = snap.val();
+  const votes = (d.rematch||0) + 1;
+  await update(roomRef, { rematch: votes });
+  if (votes >= 2) resetRoom();
+};
+
+async function resetRoom() {
+  await update(roomRef, { board: Array(9).fill(null), turn:'X', status:'playing', winner:null, winCombo:null, rematch:0 });
 }
 
-// ─── MESSAGE HANDLER ──────────────────────────────────────────────────────────
-function handleMessage(msg) {
-  if (msg.type === 'move') {
-    board[msg.idx] = currentTurn; // opponent's turn symbol
-    afterMove(msg.idx);
-  }
-  if (msg.type === 'rematch') {
-    rematchVotes++;
-    if (rematchVotes >= 2) startGame();
-    else {
-      document.getElementById('game-status').textContent = '🔄 Rywal chce rewanżu!';
-    }
-  }
-}
+window.leave = function() {
+  unsubscribe && unsubscribe();
+  if (roomRef) remove(roomRef);
+  roomRef = null; roomCode = null; myRole = null; mySymbol = null;
+  scores = {me:0,opp:0,draw:0};
+  history.replaceState(null,'',location.pathname);
+  show('s-home');
+};
 
-// ─── UTILS ────────────────────────────────────────────────────────────────────
-function copyLink() {
-  const val = document.getElementById('share-link').value;
-  navigator.clipboard.writeText(val).then(() => {
-    const btn = document.querySelector('.copy-row button');
-    btn.textContent = 'Skopiowano!';
-    setTimeout(() => btn.textContent = 'Kopiuj', 2000);
+window.copyLink = function() {
+  navigator.clipboard.writeText(document.getElementById('share-link').value).then(()=>{
+    const b = document.querySelector('.copy-row button');
+    b.textContent='Skopiowano!'; setTimeout(()=>b.textContent='Kopiuj link',2000);
   });
-}
+};
 
-function leaveGame() {
-  if (conn) { conn.close(); conn = null; }
-  if (peer) { peer.destroy(); peer = null; }
-  scores = { me: 0, opp: 0, draw: 0 };
-  showScreen('screen-home');
-}
+// auto-join from URL
+const params = new URLSearchParams(location.search);
+if (params.get('room')) { document.getElementById('join-code').value=params.get('room').toUpperCase(); show('s-join'); }
 
-// ─── AUTO-JOIN FROM URL ───────────────────────────────────────────────────────
-window.addEventListener('load', () => {
-  const params = new URLSearchParams(location.search);
-  if (params.get('room')) showJoin();
-});
-
-// ─── SERVICE WORKER ───────────────────────────────────────────────────────────
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
 </body>
