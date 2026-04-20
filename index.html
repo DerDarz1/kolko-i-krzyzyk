@@ -201,12 +201,20 @@ window.joinRoom = async function() {
   const d = snap.val();
   if (d.status !== 'waiting') { overlay(false); document.getElementById('join-err').textContent = '❌ Pokój jest już zajęty'; show('s-join'); return; }
   myRole = 'guest'; mySymbol = 'O';
-  await update(roomRef, { guest: true, status: 'playing' });
+  await update(roomRef, { guest: true, status: 'playing', board: [0,0,0,0,0,0,0,0,0], turn: 'X' });
   onDisconnect(roomRef).remove();
   overlay(false);
-  startGame(d);
-  // listen for moves
+  // subscribe FIRST, then show game
   unsubscribe = onValue(roomRef, snap => { const d=snap.val(); if(d) syncState(d); });
+  show('s-game');
+  document.getElementById('lbl-you').textContent  = 'TY (○)';
+  document.getElementById('lbl-opp').textContent  = 'RYWAL (✕)';
+  document.getElementById('sc-you').textContent   = scores.me;
+  document.getElementById('sc-opp').textContent   = scores.opp;
+  document.getElementById('sc-draw').textContent  = scores.draw;
+  document.getElementById('rematch-btn').style.display = 'none';
+  document.getElementById('game-status').textContent = '';
+  updateTurn('X');
 };
 
 // ── Game ──────────────────────────────────────────────────────────────────────
@@ -270,33 +278,30 @@ function updateTurn(turn) {
 }
 
 window.move = async function(idx) {
-  if (!roomRef) return;
+  if (!roomRef || !mySymbol) return;
   const snap = await get(roomRef);
   const d = snap.val();
   if (!d) return;
-  // allow move when playing OR waiting (host moves first before guest joins edge case)
   if (d.status === 'won' || d.status === 'draw') return;
   if (d.turn !== mySymbol) return;
-  // Firebase stores sparse arrays — normalize to 9-element array
-  const board = Array.from({length:9}, (_,i) => (d.board && d.board[i]) ? d.board[i] : null);
+  // normalize — Firebase may return object or sparse array, use index 0-8
+  const raw = d.board || {};
+  const board = Array.from({length:9}, (_,i) => {
+    const v = raw[i];
+    return (v && v !== 0) ? v : null;
+  });
   if (board[idx]) return;
   board[idx] = mySymbol;
   const win = checkWin(board);
-  const full = board.every(c=>c);
-  // Firebase can't store null in arrays — use 0 as empty placeholder
+  const full = board.every(c => c !== null);
   const fbBoard = board.map(c => c || 0);
-  let upd = { board: fbBoard, turn: mySymbol==='X'?'O':'X', status:'playing' };
+  let upd = { board: fbBoard, turn: mySymbol==='X' ? 'O' : 'X', status: 'playing' };
   if (win) {
-    upd.status = 'won';
-    upd.winner = mySymbol;
-    upd.winCombo = win;
-    upd.turn = mySymbol;
-    scores.me++;
-    document.getElementById('sc-you').textContent = scores.me;
+    upd.status = 'won'; upd.winner = mySymbol; upd.winCombo = win; upd.turn = mySymbol;
+    scores.me++; document.getElementById('sc-you').textContent = scores.me;
   } else if (full) {
     upd.status = 'draw';
-    scores.draw++;
-    document.getElementById('sc-draw').textContent = scores.draw;
+    scores.draw++; document.getElementById('sc-draw').textContent = scores.draw;
   }
   await update(roomRef, upd);
 };
